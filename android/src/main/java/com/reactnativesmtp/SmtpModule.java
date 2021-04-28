@@ -126,6 +126,8 @@ public class SmtpModule extends ReactContextBaseJavaModule {
                 Properties props = new Properties();
                 props.put("mail.smtp.auth", authEnabled);
                 props.put("mail.smtp.starttls.enable", tls);
+                props.put("mail.smtp.socketFactory.port", port);
+                props.put("mail.smtp.socketFactory.class","javax.net.ssl.SSLSocketFactory");
                 props.put("mail.smtp.host", host);
                 props.put("mail.smtp.port", port);
 
