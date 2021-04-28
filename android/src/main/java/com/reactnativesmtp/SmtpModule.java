@@ -12,6 +12,7 @@ import java.util.Properties;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
+import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -139,8 +140,8 @@ public class SmtpModule extends ReactContextBaseJavaModule {
                     message.setFrom(new InternetAddress(from));
 
                     // Set reply-to
-                    if (mailData.hasKey('replyTo')) {
-                        message.setReplyTo(new InternetAddress(mailData.hasKey('replyTo')));
+                    if (mailData.hasKey("replyTo")) {
+                        message.setReplyTo(new Address[]{new InternetAddress(mailData.getString("replyTo"))});
                     }
                     
                     message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
