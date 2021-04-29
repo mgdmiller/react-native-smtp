@@ -151,7 +151,9 @@ public class SmtpModule extends ReactContextBaseJavaModule {
 
                     Multipart multipart = new MimeMultipart();
                     MimeBodyPart messageBodyPart = new MimeBodyPart();
-                    messageBodyPart.setContent(body, "text/html");
+                    
+                    messageBodyPart.setText(body, "UTF-8");
+
                     multipart.addBodyPart(messageBodyPart);
 
                     int totalAttachmentCount = attachments.size();
