@@ -13,6 +13,7 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.mail.Address;
+import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -26,14 +27,14 @@ import javax.mail.internet.MimeMultipart;
 
 public class SmtpModule extends ReactContextBaseJavaModule {
 
-    private final ReactApplicationContext reactContext;
-
     private String username;
     private String password;
     private String host;
     private String port;
     private String authEnabled;
     private String tls;
+
+    private boolean ssl;
 
     // Errors
     private static final String E_CREDENTIAL_NOT_SET_ERROR = "E_CREDENTIAL_NOT_SET_ERROR";
@@ -43,7 +44,6 @@ public class SmtpModule extends ReactContextBaseJavaModule {
 
     public SmtpModule(ReactApplicationContext reactContext) {
         super(reactContext);
-        this.reactContext = reactContext;
 
         this.host = null;
         this.port = "465";
@@ -83,6 +83,10 @@ public class SmtpModule extends ReactContextBaseJavaModule {
 
         if (config.hasKey("tls")) {
             this.tls = config.getString("tls");
+        }
+
+        if(config.hasKey("ssl")){
+            this.ssl = config.getBoolean("ssl");
         }
     }
 
@@ -126,12 +130,15 @@ public class SmtpModule extends ReactContextBaseJavaModule {
                 Properties props = new Properties();
                 props.put("mail.smtp.auth", authEnabled);
                 props.put("mail.smtp.starttls.enable", tls);
-                props.put("mail.smtp.socketFactory.port", port);
-                props.put("mail.smtp.socketFactory.class","javax.net.ssl.SSLSocketFactory");
                 props.put("mail.smtp.host", host);
-                props.put("mail.smtp.port", port);
+                props.put("mail.smtp.port", tls);
 
-                Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+                if(ssl){
+                    props.put("mail.smtp.socketFactory.port", port);
+                    props.put("mail.smtp.socketFactory.class","javax.net.ssl.SSLSocketFactory");
+                }
+
+                Session session = Session.getInstance(props, new Authenticator() {
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(username, password);
                     }
